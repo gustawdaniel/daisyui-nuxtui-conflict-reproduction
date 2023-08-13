@@ -1,63 +1,88 @@
-# Nuxt 3 Minimal Starter
+# VueDatePicker and USelectMenu conflict
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
-## Setup
-
-Make sure to install the dependencies:
+To reproduce
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
+nvm use 20
+pnpm i
+pnpm dev
 ```
 
-## Development Server
+Open `localhost:3000` in firefox: It should work.
+Then open in chromium: You should see long loading and message
 
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
+```
+Page Unresponsive
+You can wait for it to become responsive of exit the page.
 ```
 
-## Production
+Installed packages
 
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
+```json
+  "dependencies": {
+"@vuepic/vue-datepicker": "^5.4.0"
+},
+"devDependencies": {
+"@types/node": "^18.17.3",
+"@nuxt/devtools": "latest",
+"@nuxthq/ui": "^2.7.0",
+"@nuxtjs/tailwindcss": "^6.8.0",
+"nuxt": "^3.6.5"
+}
 ```
 
-Locally preview production build:
+where there are default packages from `nuxi init`
 
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
+```json
+    "@types/node": "^18.17.3",
+"@nuxt/devtools": "latest",
+"nuxt": "^3.6.5"
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+there `@nuxthq/ui` and his dependency `@nuxtjs/tailwindcss` are described here
+
+https://github.com/nuxtlabs/ui
+https://tailwindcss.nuxtjs.org/
+
+and `@vuepic/vue-datepicker` has homepage
+
+https://vue3datepicker.com/
+
+there is nuxt config
+
+```ts
+export default defineNuxtConfig({
+    css: ['@vuepic/vue-datepicker/dist/main.css'],
+    devtools: {enabled: true},
+    modules: ['@nuxthq/ui'],
+    build: {
+        transpile: ['@vuepic/vue-datepicker']
+    }
+})
+```
+
+and app.vue component
+
+```vue
+
+<script setup>
+import VueDatePicker from '@vuepic/vue-datepicker';
+
+const people = ['Wade Cooper', 'Claudie Smith', 'Emil Schaefer']
+const selected = ref(people[0])
+
+const date = ref();
+</script>
+
+<template>
+  <USelectMenu v-model="selected" :options="people"/>
+  <VueDatePicker v-model="date"/>
+</template>
+```
+
+If I remove one of these components, the page works, but these two present at the same time on page crashing it.
+
+I observed also that if in project there are more pages, then if you visit page without these components and
+use `router-ling` to go on this page it works, so a problem is only when you opening page with these components on it.
+
+Also, if you remove these components and add them when your page is open, these works correctly thanks to HMR.
