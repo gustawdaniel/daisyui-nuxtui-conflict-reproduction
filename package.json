@@ -9,7 +9,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "daisyui": "^3.5.1"
+    "@vuepic/vue-datepicker": "^5.4.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
